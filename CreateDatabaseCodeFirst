@@ -1,0 +1,50 @@
+ADDING EFCore
+--------------
+1- from terminal
+  # For SQL Server
+    * dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+  # Tools for migrations (always needed)
+    *dotnet add package Microsoft.EntityFrameworkCore.Tools
+    *dotnet add package Microsoft.EntityFrameworkCore.Design
+____________________________________________________________________________________ OR
+2- Manually
+-----------
+  #in .csproj add the next 
+      <Project Sdk="Microsoft.NET.Sdk">
+      
+        <PropertyGroup>
+          <OutputType>Exe</OutputType>
+          <TargetFramework>net8.0</TargetFramework>
+          <ImplicitUsings>enable</ImplicitUsings>
+          <Nullable>enable</Nullable>
+        </PropertyGroup>
+      
+        <ItemGroup>
+      
+          <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+      
+          <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+      
+          <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+            <PrivateAssets>all</PrivateAssets>
+          </PackageReference>
+      
+          <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+            <PrivateAssets>all</PrivateAssets>
+          </PackageReference>
+
+        </ItemGroup>
+      
+      </Project>
+    #restore package 
+      *dotnet restore
+    #Install EF CLI Tool
+      *dotnet tool install --global dotnet-ef 
+          OR
+      *dotnet tool update --global dotnet-ef
+    #Verify Installation
+      *dotnet ef
+    #Create First Migration
+      *dotnet ef migrations add InitialCreate
+    #Create Database
+      *dotnet ef database update
