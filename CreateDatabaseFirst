@@ -1,0 +1,39 @@
+// connects to your database, reads its schema, and generates entity classes + DbContext automatically
+#dotnet ef dbcontext scaffold
+--------------------------------------------------------------------------
+1- Basic Command
+// Minimal usage
+dotnet ef dbcontext scaffold
+    "Server=.;Database=MyDb;Trusted_Connection=True;"
+    Microsoft.EntityFrameworkCore.SqlServer
+---------------------------------------------------------------------------
+2- Full Command
+dotnet ef dbcontext scaffold
+    "Server=.;Database=MyDb;Trusted_Connection=True;"
+    Microsoft.EntityFrameworkCore.SqlServer
+    --output-dir    Models           // folder for entity classes
+    --context-dir   Data             // folder for DbContext
+    --context       AppDbContext     // name for the DbContext class
+    --namespace     MyApp.Models    // namespace for entities
+    --data-annotations                // use attributes instead of Fluent API
+    --force                           // overwrite existing files
+NOTE: By default EF Core uses Fluent API for configuration. Add --data-annotations
+      For Annotation.
+----------------------------------------------------------------------------
+3- Scaffold Specific Tables
+dotnet ef dbcontext scaffold
+    "Server=.;Database=MyDb;Trusted_Connection=True;"
+    Microsoft.EntityFrameworkCore.SqlServer
+    --table Products       // scaffold only Products table
+    --table Categories     // scaffold only Categories table
+    --table Orders         // scaffold only Orders table
+    --output-dir Models
+----------------------------------------------------------------------------
+4- Re-Scaffold After DB Changes
+// --force overwrites all previously generated files
+dotnet ef dbcontext scaffold
+    "Server=.;Database=MyDb;Trusted_Connection=True;"
+    Microsoft.EntityFrameworkCore.SqlServer
+    --output-dir Models
+    --force
+----------------------------------------------------------------------------
