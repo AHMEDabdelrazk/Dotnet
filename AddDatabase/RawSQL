@@ -1,1 +1,81 @@
 
+When to Use Raw SQL
+  *Complex queries that LINQ can't express efficiently
+  *Database-specific features (CTEs, window functions)
+  *Calling stored procedures
+  *Performance-critical queries (hand-tuned SQL)
+  *Legacy database with existing procedures
+
+----------------------------------------------------------------------------------------------------------
+// Simple raw SQL query
+var products = context.Products
+    .FromSqlRaw("SELECT * FROM Products WHERE Price > 100")
+    .ToList();
+
+// Can combine with LINQ!
+var products = context.Products
+    .FromSqlRaw("SELECT * FROM Products")
+    .Where(p => p.IsActive)       // LINQ added to raw SQL
+    .OrderBy(p => p.Name)
+    .ToList();
+-----------------------------------------------------------------------------------------------------------
+With Parameters (SAFE!)
+***********************
+// ✅ Safe — parameterized (prevents SQL injection)
+var minPrice = 100m;
+var products = context.Products
+    .FromSqlRaw("SELECT * FROM Products WHERE Price > {0}", minPrice)
+    .ToList();
+
+// Or with SqlParameter
+var param = new SqlParameter("@price", minPrice);
+var products = context.Products
+    .FromSqlRaw("SELECT * FROM Products WHERE Price > @price", param)
+    .ToList();
+-----------------------------------------------------------------------------------------------------------
+Calling Stored Procedures
+**************************
+Stored Procedure That Returns Entities
+**************************************
+// Stored procedure: GetProductsByCategory
+var categoryId = 1;
+var products = context.Products
+    .FromSql(
+        $"EXEC GetProductsByCategory {categoryId}")
+    .ToList();
+---------------------------------------------------------------
+Non-Query Stored Procedure
+**************************
+// For INSERT/UPDATE/DELETE stored procedures
+var productId = 1;
+var newPrice = 199.99m;
+
+var rowsAffected = await context.Database
+    .ExecuteSqlAsync(
+        $"EXEC UpdateProductPrice {productId}, {newPrice}");
+
+Console.WriteLine($"{rowsAffected} rows updated");
+----------------------------------------------------------------
+Output Parameters
+*****************
+var outputParam = new SqlParameter("@TotalCount", SqlDbType.Int)
+{
+    Direction = ParameterDirection.Output
+};
+
+await context.Database.ExecuteSqlRawAsync(
+    "EXEC GetProductCount @TotalCount OUTPUT", outputParam);
+
+var count = (int)outputParam.Value;
+-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
