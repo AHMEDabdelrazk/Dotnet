@@ -1,0 +1,67 @@
+1️⃣ HTTP Fundamentals
+-=-=-=-=-=-=-=-=-=-=-=
+▸ Request & response anatomy
+----------------------------
+- When you type google.com, your browser sends a request across the internet and receives back an HTML page
+  to display — that exchange is the web.
+🌍 Internet: The global physical network of computers, cables, and routers connected together.
+🌐 Web (WWW): A service running on the internet — web pages, links, browsers.
+📧 Email: Another service on the internet — completely separate from the Web.
+----------------------------
+How the Web Works ⚙️
+(1) what the web is built from — HTML, CSS, JavaScript — and 
+(2) how a web page actually travels from the server to your browse
+----------------------------
+1- type url in web browser ( check Browser cache first )
+2- DNS Lookup (Finding the Server IP) DNS translates names to IP addresses.
+2- Browser Opens a Connection ( TCP connection , TLS/SSL encryption setup ) 
+        * TCP Handshake
+              - Client -> SYN
+              - Server -> SYN-ACK
+              - Client -> ACK
+2- TLS Handshake (HTTPS Security)
+              - Verify certificates
+              - Agree on encryption algorithms
+              - Generate session keys
+3- HTTP Request — Browser asks the server: GET
+              request examble
+              {
+                  GET /products?id=42 HTTP/1.1
+                  Host: www.example.com
+                  User-Agent: Chrome
+                  Accept: text/html
+                  Cookie: session=abc123
+              }
+              This request travels across:
+              - Your router
+              - ISP
+              - Internet backbone
+              Multiple routers
+              Possibly CDNs and proxies
+7. Request Reaches the Web Server
+              The server might be running software like:
+                    - Nginx
+                    - Apache HTTP Server
+                    - Node.js
+              
+              The server processes the request.
+              
+              Possible actions:
+                    - Read files
+                    - Query databases
+                    - Authenticate user
+                    - Run backend code
+                    - Call APIs
+8. Backend Processing
+              For dynamic sites, the backend application may:
+                    - Receive the request
+                    - Query a database
+                    - Generate HTML dynamically
+                    - Return JSON/API responses
+4- HTTP Response — Server replies: 200 OK + HTML payload
+5- Browser Renders — the page appears on your screen!
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+▸ Methods, headers, status codes
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+▸ Content negotiation
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
