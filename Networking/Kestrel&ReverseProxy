@@ -1,0 +1,10 @@
+1-The browser/user sends a request.
+2-The reverse proxy (such as Nginx or Internet Information Services) receives it.
+3-The reverse proxy forwards the request to Kestrel.
+4-Kestrel runs the ASP.NET Core app and sends the response back through the reverse proxy.
+------------------------------------------------------------------------------
+🛡️
+Mode 2 — Behind a Proxy
+Nginx/IIS faces the internet, forwards to Kestrel internally.
+🌍 → 🛎️ Proxy → ⚙️ Kestrel → 📦 App
+⭐ Production recommended — we'll see why
