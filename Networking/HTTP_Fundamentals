@@ -62,6 +62,64 @@ How the Web Works ⚙️
 5- Browser Renders — the page appears on your screen!
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ▸ Methods, headers, status codes
+--------------------------------
+REQUEST headers (client → server)
+--------------------------------
+Content-Type
+Format of the request body
+application/json
+
+Accept
+What format the client wants back
+application/json
+
+Authorization
+Authentication credentials
+Bearer <token>
+
+Accept-Language
+Preferred response language
+en-US, ar;q=0.9
+
+User-Agent
+Client software identifier
+Mozilla/5.0 ...
+---------------------------------
+RESPONSE headers (server → client)
+---------------------------------
+Content-Type
+Format of the response body
+application/json; charset=utf-8
+
+Location
+URL of newly created resource
+/api/products/42
+
+Cache-Control
+Caching directives
+max-age=3600
+
+WWW-Authenticate
+Auth scheme on 401 responses
+Bearer realm="api"
+
+Access-Control-Allow-Origin
+CORS — which origins are allowed
+https://myapp.com
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ▸ Content negotiation
+----------------------
+// Client A wants JSON
+GET /api/products/1
+Accept: application/json
+→ Response: Content-Type: application/json  { "id": 1, "name": "Laptop" }
+ 
+// Client B wants XML
+GET /api/products/1
+Accept: application/xml
+→ Response: Content-Type: application/xml   <Product><Id>1</Id>...</Product>
+ 
+// Client C sends multiple with quality weights (q=)
+Accept: application/json;q=1.0, application/xml;q=0.8, */*;q=0.5
+→ Server picks the highest-quality format it supports
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
