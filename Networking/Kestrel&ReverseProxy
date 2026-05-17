@@ -8,3 +8,61 @@ Mode 2 — Behind a Proxy
 Nginx/IIS faces the internet, forwards to Kestrel internally.
 🌍 → 🛎️ Proxy → ⚙️ Kestrel → 📦 App
 ⭐ Production recommended — we'll see why
+-------------------------------------------------------------------------------
+var builder = WebApplication.CreateBuilder(args);
+// ↑ Kestrel is already configured here — no extra setup needed
+ 
+var app = builder.Build();
+app.MapGet("/", () => "Hello from Kestrel!");
+app.Run();
+// New project templates auto-pick random ports per project:
+//   HTTP  → some port in 5000-5300
+//   HTTPS → some port in 7000-7300
+// Stored in Properties/launchSettings.json — you can change them anytime.
+-------------------------------------------------------------------------------
+Kestrel's defaults work for development but production deployments often need custom ports, certificate paths, 
+and request size limits. All of this is configurable in code or via appsettings.json.
+-------------------------------------------------------------------------------
+{
+  "Kestrel": {
+    "Endpoints": {
+      "Http": {
+        "Url": "http://0.0.0.0:5000"
+      },
+      "Https": {
+        "Url": "https://0.0.0.0:5001",
+        "Certificate": {
+          "Path":     "certs/myapp.pfx",
+          "Password": "s3cr3t"
+        }
+      }
+    },
+    "Limits": {
+      "MaxRequestBodySize":         10485760,  // 10 MB
+      "MaxConcurrentConnections":    100,
+      "KeepAliveTimeout":           "00:02:00"
+    }
+  }
+}
+----------------------------------------------------------------------------------
+A reverse proxy sits between the internet and Kestrel. Clients talk to the proxy — the proxy forwards requests to Kestrel, 
+gets the response, and sends it back. To the outside world, Kestrel is invisible. This unlocks capabilities Kestrel 
+deliberately doesn't implement.
+----------------------------------------------------------------------------------
+reverse proxy add the next -> 
+----------------------------
+🔒SSL Termination
+Handles HTTPS cert renewal; Kestrel sees plain HTTP internally
+
+⚖️Load Balancing
+Distribute traffic across multiple Kestrel instances
+
+🛡️Security Hardening
+Rate limiting, IP filtering, Web Application Firewall rules at the edge
+
+📁Static Files
+Nginx serves CSS/JS/images far faster than Kestrel
+
+🔁Request Buffering
+Absorbs slow clients so Kestrel threads aren't blocked
+----------------------------------------------------------------------------------
