@@ -1,0 +1,81 @@
+In MVC, a controller action returns a ViewResult — EF Core fetches data, the controller passes it to a Razor view
+(.cshtml), and the server renders a complete HTML page sent to the browser.
+-------------------------------------------------------------------------------------------------------------------
+public class ProductsController : Controller   // ← Controller (not ControllerBase)
+{
+    private readonly AppDbContext _context;
+ 
+    public ProductsController(AppDbContext context) => _context = context;
+ 
+    // Returns an HTML page — not JSON
+    public async Task<IActionResult> Index()
+    {
+        var products = await _context.Products.ToListAsync();
+        return View(products);   // renders Views/Products/Index.cshtml
+    }
+ 
+    // Passes a single item to a detail page
+    public async Task<IActionResult> Details(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null) return NotFound();
+        return View(product);   // renders Views/Products/Details.cshtml
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------
+The Razor View — Index.cshtml
+-----------------------------
+@* Strongly typed view — model is a list of Products *@
+@model IEnumerable<Product>
+ 
+<h1>All Products</h1>
+<ul>
+@foreach (var p in Model)
+{
+    <li>@p.Name — @p.Price.ToString("C")</li>
+}
+</ul>
+-----------------------------------------------------------------------------------------------------------------------
+In Web API, a controller action returns data — not a page. ASP.NET Core serializes your C# objects into JSON automatically and sends 
+it with the correct HTTP status code. The client (browser SPA, mobile app, another service) handles the rendering.
+-----------------------------------------------------------------------------------------------------------------------
+[ApiController]                        // ← enables API-specific behaviors
+[Route("api/[controller]")]
+public class ProductsController : ControllerBase  // ← ControllerBase (no View support)
+{
+    private readonly AppDbContext _context;
+ 
+    public ProductsController(AppDbContext context) => _context = context;
+ 
+    [HttpGet]                           // GET api/products
+    public async Task<ActionResult<IEnumerable<Product>>> GetAll()
+    {
+        return Ok(await _context.Products.ToListAsync());  // 200 + JSON array
+    }
+ 
+    [HttpGet("{id}")]                    // GET api/products/5
+    public async Task<ActionResult<Product>> GetById(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null) return NotFound();      // 404
+        return Ok(product);                          // 200 + JSON object
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------
+// ControllerBase — the shared foundation
+public abstract class ControllerBase
+{
+    // Routing, ModelState, HttpContext, Request, Response
+    // Ok(), NotFound(), BadRequest(), Created(), StatusCode()
+    // [FromBody], [FromQuery], [FromRoute] model binding
+}
+ 
+// Controller — adds View support on top
+public abstract class Controller : ControllerBase
+{
+    // Everything from ControllerBase PLUS:
+    // View(), PartialView(), ViewComponent()
+    // ViewBag, ViewData, TempData
+    // RedirectToAction(), Json(), Content()
+}
+-----------------------------------------------------------------------------------------------------------------------
