@@ -1,0 +1,74 @@
+A controller is a class that groups related HTTP endpoints together. Each action method inside it handles one 
+specific request — reading input, calling services, and returning a response. Controllers are the bridge between
+the HTTP pipeline and your application logic.
+-----------------------------------------------------------------------------------------------------------------------
+ControllerBase vs Controller
+----------------------------
+// Side-by-Side — Same Action, Different Base Class
+// ✅ Web API controller — ControllerBase, returns JSON
+[ApiController]
+[Route("api/[controller]")]
+public class ProductsController : ControllerBase
+{
+    [HttpGet]
+    public ActionResult<IEnumerable<Product>> GetAll()
+        => Ok(_products);   // returns 200 + JSON
+}
+
+// ✅ MVC controller — Controller, renders .cshtml views
+public class ProductsController : Controller
+{
+    public IActionResult Index()
+        => View(_products);  // renders Views/Products/Index.cshtml
+}
+
+// ❌ Wrong — API controller inheriting Controller
+public class ProductsController : Controller   // ← loads Razor engine unnecessarily
+{
+    [HttpGet]
+    public IActionResult GetAll() => Ok(_products);
+    // Never calls View() — Controller base is wasted overhead
+}
+---------------------------------------------------------------------------------------------------
+ApiController
+--------------
+// WITHOUT [ApiController] — you write this on every POST/PUT action:
+[HttpPost]
+public IActionResult Create(CreateProductDto dto)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);   // ← manual check every time
+    // ...
+}
+--------------
+public IActionResult Update(
+    [FromRoute] int              id,
+    [FromBody]  UpdateProductDto dto,
+    [FromQuery] bool             notify) { }
+---------------------------------------------------------------------------------------------------
+🆔
+IDENTITY (URL)
+[FromRoute]
+URL path segment
+/api/products/42 → id = 42 
+[FromQuery]
+Query string
+?page=2&size=20
+📦
+BODY (PAYLOAD)
+[FromBody]
+Request body (JSON/XML)
+{ "name": "Laptop" }
+[FromForm]
+Form data / multipart
+File upload, HTML form POST
+🏷️
+METADATA / OUT-OF-BAND
+[FromHeader]
+Request header
+Authorization: Bearer ...
+---------------------------------------------------------------------------------------------------
+ASP.NET Core discovers controllers automatically by convention — no registration required. Understanding those conventions
+prevents the mysterious "my action isn't being found" bug and clarifies how dependency injection, filters, and action
+exclusion work at the controller level.
+
