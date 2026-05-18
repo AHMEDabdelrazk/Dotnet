@@ -1,0 +1,3 @@
+[FromRoute] binds a parameter from a named segment in the route template. It is the natural source for values that identify
+a resource — IDs, slugs, version numbers — anything that is structurally part of the URL path itself.
+-------------------------------------------------------------------------------------------------------------------- 
